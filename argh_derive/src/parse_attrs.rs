@@ -293,6 +293,7 @@ pub fn has_argh_attrs(attrs: &[syn::Attribute]) -> bool {
 pub struct TypeAttrs {
     pub is_subcommand: Option<syn::Ident>,
     pub name: Option<syn::LitStr>,
+    pub short: Option<syn::LitChar>,
     pub description: Option<Description>,
     pub examples: Vec<syn::LitStr>,
     pub notes: Vec<syn::LitStr>,
@@ -337,6 +338,10 @@ impl TypeAttrs {
                     if let Some(m) = errors.expect_meta_name_value(&meta) {
                         this.parse_attr_name(errors, m);
                     }
+                } else if name.is_ident("short") {
+                    if let Some(m) = errors.expect_meta_name_value(&meta) {
+                        this.parse_attr_short(errors, m);
+                    }
                 } else if name.is_ident("note") {
                     if let Some(m) = errors.expect_meta_name_value(&meta) {
                         this.parse_attr_note(errors, m);
@@ -360,7 +365,7 @@ impl TypeAttrs {
                         concat!(
                             "Invalid type-level `argh` attribute\n",
                             "Expected one of: `description`, `error_code`, `example`, `name`, ",
-                            "`note`, `subcommand`, `usage`",
+                            "`note`, `short`, `subcommand`, `usage`",
                         ),
                     );
                 }
@@ -428,6 +433,17 @@ impl TypeAttrs {
             && name.value() == "help" {
                 errors.err(name, "Custom `help` commands are not supported.");
             }
+    }
+
+    fn parse_attr_short(&mut self, errors: &Errors, m: &syn::MetaNameValue) {
+        if let Some(first) = &self.short {
+            errors.duplicate_attrs("short", first, m);
+        } else if let Some(lit_char) = errors.expect_lit_char(&m.value) {
+            self.short = Some(lit_char.clone());
+            if !lit_char.value().is_ascii() {
+                errors.err(lit_char, "Short names must be ASCII");
+            }
+        }
     }
 
     fn parse_attr_note(&mut self, errors: &Errors, m: &syn::MetaNameValue) {
@@ -706,6 +722,7 @@ pub fn check_enum_type_attrs(errors: &Errors, type_attrs: &TypeAttrs, type_span:
     let TypeAttrs {
         is_subcommand,
         name,
+        short,
         description,
         examples,
         notes,
@@ -730,10 +747,14 @@ pub fn check_enum_type_attrs(errors: &Errors, type_attrs: &TypeAttrs, type_span:
     if let Some(name) = name {
         err_unused_enum_attr(errors, name);
     }
-    if let Some(description) = description
-        && description.explicit {
+    if let Some(short) = short {
+        err_unused_enum_attr(errors, short);
+    }
+    if let Some(description) = description {
+        if description.explicit {
             err_unused_enum_attr(errors, &description.content);
         }
+    }
     if let Some(example) = examples.first() {
         err_unused_enum_attr(errors, example);
     }

@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
 
     - name: Build
       run: cargo build --workspace --examples --verbose
@@ -17,11 +17,17 @@ jobs:
     - name: Run simple_example
       run: cargo run --package argh --example simple_example two --fooey --woot quiet
 
+    - name: Run completion_example
+      run: |
+        cargo run --package argh --example completion_example completion bash
+        cargo run --package argh --example completion_example completion zsh
+        cargo run --package argh --example completion_example completion fish
+
   rustfmt:
     name: rustfmt
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
 
     - name: Run Rustfmt
       run: cargo fmt -- --check
@@ -30,7 +36,7 @@ jobs:
     name: clippy
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v6
 
     - name: Run clippy
       run: cargo clippy --version && cargo clippy --tests --workspace -- -D warnings -A clippy::needless-raw-string-hashes
@@ -39,7 +45,7 @@ jobs:
     name: docs
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v6
 
     - name: Check documentation
       env:

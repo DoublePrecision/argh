@@ -1,5 +1,5 @@
 [workspace.package]
-version = "0.1.13"
+version = "0.1.20"
 authors = [
     "Taylor Cramer <cramertj@google.com>",
     "Benjamin Brittain <bwb@google.com>",
@@ -12,9 +12,15 @@ description = "Derive-based argument parsing optimized for code size"
 repository = "https://github.com/google/argh"
 
 [workspace]
-members = ["argh", "argh_derive", "argh_shared"]
+members = [
+    "argh",
+    "argh_derive",
+    "argh_shared",
+    "argh_complete",
+]
 resolver = "3"
 
 [workspace.dependencies]
-argh_shared = { version = "0.1.13", path = "argh_shared" }
-argh_derive = { version = "0.1.13", path = "argh_derive" }
+argh_shared = { version = "0.1.20", path = "argh_shared" }
+argh_derive = { version = "0.1.20", path = "argh_derive" }
+argh_complete = { version = "0.1.20", path = "argh_complete" }
