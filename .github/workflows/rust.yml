@@ -8,6 +8,9 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
     - name: Build
       run: cargo build --workspace --examples --verbose
 
@@ -29,6 +32,9 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
     - name: Run Rustfmt
       run: cargo fmt -- --check
 
@@ -38,6 +44,9 @@ jobs:
     steps:
     - uses: actions/checkout@v6
 
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
+
     - name: Run clippy
       run: cargo clippy --version && cargo clippy --tests --workspace -- -D warnings -A clippy::needless-raw-string-hashes
 
@@ -46,6 +55,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
+
+    - name: Install Rust
+      uses: dtolnay/rust-toolchain@stable
 
     - name: Check documentation
       env:
