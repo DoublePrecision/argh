@@ -430,9 +430,10 @@ impl TypeAttrs {
     fn parse_attr_name(&mut self, errors: &Errors, m: &syn::MetaNameValue) {
         parse_attr_single_string(errors, m, "name", &mut self.name);
         if let Some(name) = &self.name
-            && name.value() == "help" {
-                errors.err(name, "Custom `help` commands are not supported.");
-            }
+            && name.value() == "help"
+        {
+            errors.err(name, "Custom `help` commands are not supported.");
+        }
     }
 
     fn parse_attr_short(&mut self, errors: &Errors, m: &syn::MetaNameValue) {
@@ -684,10 +685,11 @@ fn unescape_doc(s: String) -> String {
     while let Some(mut character) = characters.next() {
         if character == '\\'
             && let Some(next_character) = characters.peek()
-                && next_character.is_ascii_punctuation() {
-                    character = *next_character;
-                    characters.next();
-                }
+            && next_character.is_ascii_punctuation()
+        {
+            character = *next_character;
+            characters.next();
+        }
 
         // Braces must be escaped as this string will be used as a format string
         if character == '{' || character == '}' {
@@ -709,9 +711,10 @@ fn parse_attr_description(errors: &Errors, m: &syn::MetaNameValue, slot: &mut Op
 
     // Don't allow multiple explicit (non doc-comment) descriptions
     if let Some(description) = slot
-        && description.explicit {
-            errors.duplicate_attrs("description", &description.content, lit_str);
-        }
+        && description.explicit
+    {
+        errors.duplicate_attrs("description", &description.content, lit_str);
+    }
 
     *slot = Some(Description { explicit: true, content: lit_str.clone() });
 }
@@ -765,9 +768,10 @@ pub fn check_enum_type_attrs(errors: &Errors, type_attrs: &TypeAttrs, type_span:
         err_unused_enum_attr(errors, &err_code.0);
     }
     if let Some(triggers) = help_triggers
-        && let Some(trigger) = triggers.first() {
-            err_unused_enum_attr(errors, trigger);
-        }
+        && let Some(trigger) = triggers.first()
+    {
+        err_unused_enum_attr(errors, trigger);
+    }
     if let Some(usage) = usage {
         err_unused_enum_attr(errors, usage);
     }

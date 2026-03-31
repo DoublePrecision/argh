@@ -124,23 +124,23 @@ fn args_info_test_multiline_doc_comment() {
         /// lines of comments.
         _s: bool,
     }
-    assert_args_info::<Cmd>(
-            &CommandInfoWithArgs {
-                name: "Cmd",
-                short: &'\0',
-                description: "Short description",
-                flags: &[HELP_FLAG,
-                FlagInfo {
-                    kind: FlagInfoKind::Switch,
-                    optionality: Optionality::Optional,
-                    long: "--s",
-                    short: None,
-                    description: "a switch with a description that is spread across a number of lines of comments.",
-                    hidden:false
-                }
-                ],
-           ..Default::default()
-            });
+    assert_args_info::<Cmd>(&CommandInfoWithArgs {
+        name: "Cmd",
+        short: &'\0',
+        description: "Short description",
+        flags: &[
+            HELP_FLAG,
+            FlagInfo {
+                kind: FlagInfoKind::Switch,
+                optionality: Optionality::Optional,
+                long: "--s",
+                short: None,
+                description: "a switch with a description that is spread across a number of lines of comments.",
+                hidden: false,
+            },
+        ],
+        ..Default::default()
+    });
 }
 
 #[test]
@@ -168,8 +168,7 @@ fn args_info_test_basic_args() {
     assert_args_info::<Basic>(&CommandInfoWithArgs {
         name: "Basic",
         short: &'\0',
-        description:
-            "Basic command args demonstrating multiple types and cardinality. \"With quotes\"",
+        description: "Basic command args demonstrating multiple types and cardinality. \"With quotes\"",
         flags: &[
             FlagInfo {
                 kind: FlagInfoKind::Switch,
@@ -398,26 +397,30 @@ fn args_info_test_notes_examples_errors() {
         #[argh(positional, arg_name = "files")]
         fields: Vec<std::path::PathBuf>,
     }
-    assert_args_info::<NotesExamplesErrors>(
-            &CommandInfoWithArgs {
-                name: "NotesExamplesErrors",
-                short: &'\0',
-                description: "Command with Examples and usage Notes, including error codes.",
-                examples: &["\n    Use the command with 1 file:\n    `{command_name} /path/to/file`\n    Use it with a \"wildcard\":\n    `{command_name} /path/to/*`\n     a blank line\n    \n    and one last line with \"quoted text\"."],
-                flags: &[HELP_FLAG
-                ],
-                positionals: &[
-                    PositionalInfo{
-                        name: "files",
-                        description: "the \"root\" position.",
-                        optionality: Optionality::Repeating,
-                        hidden:false
-                    }
-                ],
-                notes: &["\n    These usage notes appear for {command_name} and how to best use it.\n    The formatting should be preserved.\n    one\n    two\n    three then a blank\n    \n    and one last line with \"quoted text\"."],
-                error_codes: & [ErrorCodeInfo { code: 0, description: "Success" }, ErrorCodeInfo { code: 1, description: "General Error" }, ErrorCodeInfo { code: 2, description: "Some error with \"quotes\"" }],
-                ..Default::default()
-            });
+    assert_args_info::<NotesExamplesErrors>(&CommandInfoWithArgs {
+        name: "NotesExamplesErrors",
+        short: &'\0',
+        description: "Command with Examples and usage Notes, including error codes.",
+        examples: &[
+            "\n    Use the command with 1 file:\n    `{command_name} /path/to/file`\n    Use it with a \"wildcard\":\n    `{command_name} /path/to/*`\n     a blank line\n    \n    and one last line with \"quoted text\".",
+        ],
+        flags: &[HELP_FLAG],
+        positionals: &[PositionalInfo {
+            name: "files",
+            description: "the \"root\" position.",
+            optionality: Optionality::Repeating,
+            hidden: false,
+        }],
+        notes: &[
+            "\n    These usage notes appear for {command_name} and how to best use it.\n    The formatting should be preserved.\n    one\n    two\n    three then a blank\n    \n    and one last line with \"quoted text\".",
+        ],
+        error_codes: &[
+            ErrorCodeInfo { code: 0, description: "Success" },
+            ErrorCodeInfo { code: 1, description: "General Error" },
+            ErrorCodeInfo { code: 2, description: "Some error with \"quotes\"" },
+        ],
+        ..Default::default()
+    });
 }
 
 #[test]
@@ -548,8 +551,7 @@ fn args_info_test_subcommands() {
                             optionality: Optionality::Optional,
                             long: "--power",
                             short: None,
-                            description:
-                                "should the power be on. \"Quoted value\" should work too.",
+                            description: "should the power be on. \"Quoted value\" should work too.",
                             hidden: false,
                         },
                         FlagInfo {
@@ -557,8 +559,7 @@ fn args_info_test_subcommands() {
                             optionality: Optionality::Required,
                             long: "--required",
                             short: None,
-                            description:
-                                "option that is required because of no default and not Option<>.",
+                            description: "option that is required because of no default and not Option<>.",
                             hidden: false,
                         },
                         FlagInfo {
@@ -586,8 +587,7 @@ fn args_info_test_subcommands() {
                 command: CommandInfoWithArgs {
                     name: "three",
                     short: &'\0',
-                    description:
-                        "Command3 args are used for Command3 which has no options or arguments.",
+                    description: "Command3 args are used for Command3 which has no options or arguments.",
                     flags: &[HELP_FLAG],
                     positionals: &[],
                     ..Default::default()
@@ -747,49 +747,96 @@ fn args_info_test_example() {
         safely: bool,
     }
 
-    assert_args_info::<HelpExample>(
-            &CommandInfoWithArgs {
-                name: "HelpExample",
-                short: &'\0',
-                description: "Destroy the contents of <file> with a specific \"method of destruction\".",
-                examples: &["Scribble 'abc' and then run |grind|.\n$ {command_name} -s 'abc' grind old.txt taxes.cp"],
-                flags: &[HELP_FLAG,
-                FlagInfo { kind: FlagInfoKind::Switch, optionality: Optionality::Optional, long: "--force", short: Some('f'), description: "force, ignore minor errors. This description is so long that it wraps to the next line.",
-                hidden:false },
-                FlagInfo { kind: FlagInfoKind::Switch, optionality: Optionality::Optional, long: "--really-really-really-long-name-for-pat", short: None, description: "documentation",
-                hidden:false },
-                FlagInfo { kind: FlagInfoKind::Option { arg_name: "scribble"},
-                 optionality: Optionality::Required, long: "--scribble", short: Some('s'), description: "write <scribble> repeatedly",
-                 hidden:false },
-                  FlagInfo { kind: FlagInfoKind::Switch, optionality: Optionality::Optional, long: "--verbose", short: Some('v'), description: "say more. Defaults to $BLAST_VERBOSE.",
-                  hidden:false }
-                ],
-                notes: &["Use `{command_name} help <command>` for details on [<args>] for a subcommand."],
-                commands: vec![
-                    SubCommandInfo { name: "blow-up",
-                 command: CommandInfoWithArgs { name: "blow-up",
-                  short: &'\0',
-                  description: "explosively separate", 
-                  flags:& [HELP_FLAG,
-                   FlagInfo { kind: FlagInfoKind::Switch, optionality: Optionality::Optional, long: "--safely", short: None, description: "blow up bombs safely",
-                   hidden:false }
-                   ],
-                ..Default::default()
-             } },
-              SubCommandInfo {
-                 name: "grind",
-                 command: CommandInfoWithArgs {
-                     name: "grind",
-                     description: "make smaller by many small cuts",
-                     flags: &[HELP_FLAG,
-                      FlagInfo { kind: FlagInfoKind::Switch, optionality: Optionality::Optional, long: "--safely", short: None, description: "wear a visor while grinding" ,hidden:false}],
-                      ..Default::default()
-                     }
-                }],
-                error_codes: &[ErrorCodeInfo { code: 2, description: "The blade is too dull." }, ErrorCodeInfo { code: 3, description: "Out of fuel." }],
-                ..Default::default()
-            }
-            );
+    assert_args_info::<HelpExample>(&CommandInfoWithArgs {
+        name: "HelpExample",
+        short: &'\0',
+        description: "Destroy the contents of <file> with a specific \"method of destruction\".",
+        examples: &[
+            "Scribble 'abc' and then run |grind|.\n$ {command_name} -s 'abc' grind old.txt taxes.cp",
+        ],
+        flags: &[
+            HELP_FLAG,
+            FlagInfo {
+                kind: FlagInfoKind::Switch,
+                optionality: Optionality::Optional,
+                long: "--force",
+                short: Some('f'),
+                description: "force, ignore minor errors. This description is so long that it wraps to the next line.",
+                hidden: false,
+            },
+            FlagInfo {
+                kind: FlagInfoKind::Switch,
+                optionality: Optionality::Optional,
+                long: "--really-really-really-long-name-for-pat",
+                short: None,
+                description: "documentation",
+                hidden: false,
+            },
+            FlagInfo {
+                kind: FlagInfoKind::Option { arg_name: "scribble" },
+                optionality: Optionality::Required,
+                long: "--scribble",
+                short: Some('s'),
+                description: "write <scribble> repeatedly",
+                hidden: false,
+            },
+            FlagInfo {
+                kind: FlagInfoKind::Switch,
+                optionality: Optionality::Optional,
+                long: "--verbose",
+                short: Some('v'),
+                description: "say more. Defaults to $BLAST_VERBOSE.",
+                hidden: false,
+            },
+        ],
+        notes: &["Use `{command_name} help <command>` for details on [<args>] for a subcommand."],
+        commands: vec![
+            SubCommandInfo {
+                name: "blow-up",
+                command: CommandInfoWithArgs {
+                    name: "blow-up",
+                    short: &'\0',
+                    description: "explosively separate",
+                    flags: &[
+                        HELP_FLAG,
+                        FlagInfo {
+                            kind: FlagInfoKind::Switch,
+                            optionality: Optionality::Optional,
+                            long: "--safely",
+                            short: None,
+                            description: "blow up bombs safely",
+                            hidden: false,
+                        },
+                    ],
+                    ..Default::default()
+                },
+            },
+            SubCommandInfo {
+                name: "grind",
+                command: CommandInfoWithArgs {
+                    name: "grind",
+                    description: "make smaller by many small cuts",
+                    flags: &[
+                        HELP_FLAG,
+                        FlagInfo {
+                            kind: FlagInfoKind::Switch,
+                            optionality: Optionality::Optional,
+                            long: "--safely",
+                            short: None,
+                            description: "wear a visor while grinding",
+                            hidden: false,
+                        },
+                    ],
+                    ..Default::default()
+                },
+            },
+        ],
+        error_codes: &[
+            ErrorCodeInfo { code: 2, description: "The blade is too dull." },
+            ErrorCodeInfo { code: 3, description: "Out of fuel." },
+        ],
+        ..Default::default()
+    });
 }
 
 #[test]

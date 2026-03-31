@@ -1033,11 +1033,12 @@ pub fn parse_struct_args(
         }
 
         if let Some(ref mut parse_subcommand) = parse_subcommand
-            && parse_subcommand.parse(help, cmd_name, next_arg, remaining_args)? {
-                // Unset `help`, since we handled it in the subcommand
-                help = false;
-                break 'parse_args;
-            }
+            && parse_subcommand.parse(help, cmd_name, next_arg, remaining_args)?
+        {
+            // Unset `help`, since we handled it in the subcommand
+            help = false;
+            break 'parse_args;
+        }
 
         options_ended |= parse_positionals.parse(&mut positional_index, next_arg)?;
     }
