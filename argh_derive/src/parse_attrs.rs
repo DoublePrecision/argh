@@ -753,11 +753,10 @@ pub fn check_enum_type_attrs(errors: &Errors, type_attrs: &TypeAttrs, type_span:
     if let Some(short) = short {
         err_unused_enum_attr(errors, short);
     }
-    if let Some(description) = description {
-        if description.explicit {
+    if let Some(description) = description
+        && description.explicit {
             err_unused_enum_attr(errors, &description.content);
         }
-    }
     if let Some(example) = examples.first() {
         err_unused_enum_attr(errors, example);
     }
